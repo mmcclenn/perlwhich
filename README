@@ -1,9 +1,9 @@
 
-The perlwhich command prints the full path to the specified Perl module or
-modules, if it is found in @INC. Each module may be specified as either a
-package name (My::Package) or a file name (My/Package.pm). Each name is tried
-both with and without the .pm suffix. By default, the first path name found
-for each argument is printed.
+The perlwhich command is the equivalent of 'which' for Perl modules. It prints
+the full path to each specified Perl module, if it is found in @INC. A module
+may be specified as either a package name (My::Package) or a file name
+(My/Package.pm). Each name is tried both with and without the .pm suffix. By
+default, the first path name found for each argument is printed.
 
 INSTALLATION
 
