@@ -1,23 +1,15 @@
-perlwhich
 
-The README is used to introduce the module and provide instructions on
-how to install the module, any machine dependencies it may have (for
-example C compilers and installed libraries) and any other information
-that should be provided before the module is installed.
-
-A README file is required for CPAN modules since CPAN extracts the README
-file from a module distribution so that people browsing the archive
-can use it to get an idea of the module's uses. It is usually a good idea
-to provide version information here so that people can decide whether
-fixes for the module are worth downloading.
-
+The perlwhich command prints the full path to the specified Perl module or
+modules, if it is found in @INC. Each module may be specified as either a
+package name (My::Package) or a file name (My/Package.pm). Each name is tried
+both with and without the .pm suffix. By default, the first path name found
+for each argument is printed.
 
 INSTALLATION
 
-To install this module, run the following commands:
+To install this command, run the following commands:
 
 	perl Build.PL
-	./Build
 	./Build test
 	./Build install
 
