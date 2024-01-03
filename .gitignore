@@ -1,6 +1,4 @@
 !Build/
-/META.yml
-/META.json
 /MYMETA.*
 
 # Module::Build
