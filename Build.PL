@@ -1,6 +1,6 @@
 use Module::Build;
 my $builder = Module::Build->new(
-    dist_name         => 'perlwhich',
+    dist_name       => 'App-perlwhich',
     license           => 'perl',
     dist_author         => q{Michael McClennen <mmcclenn@gmail.com>},
     dist_version_from   => 'script/perlwhich',

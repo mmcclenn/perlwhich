@@ -28,16 +28,17 @@
 
 use strict;
 
-use feature 'say';
+use v5.10;
 
 use Pod::Usage;
 
-our ($VERSION) = '0.8';
+our ($VERSION) = '0.81';
+
+# Result code: 1 = not found, 0 = found
+
+my $rc = 1;
 
 # Look for options, with bundling.
-
-my @names;
-my $found;
 
 my $flags = '';
 my $OPT_ALL;
@@ -79,11 +80,26 @@ $OPT_ALL = 1 if $flags =~ /a/;
 $OPT_DIR = 1 if $flags =~ /d/;
 $OPT_VER = 1 if $flags =~ /v/;
 
+# Determine whether the path separator is / or \ by checking the last separator
+# in the first element of @INC that contains a separator.
+
+my $sep = '';
+
+foreach my $path (@INC)
+{
+    if ( $path =~ /[\\\/]/ )
+    {
+	($sep) = $path =~ /([\\\/])[^\\\/]*$/;
+	last;
+    }
+}
 
 # Remaining arguments are names to look up.
 
 foreach my $arg ( @ARGV )
 {
+    my @names;
+    
     # An argument that contains '::' is taken to be the name of a Perl module.
     # Look for the equivalent .pm or .pod file. If neither one is found, look
     # for a matching directory. With the -d option, only the directory is
@@ -91,7 +107,7 @@ foreach my $arg ( @ARGV )
     
     if ( $arg =~ /::/ )
     {
-	$arg =~ s{::}{/}g;
+	$arg =~ s/::/$sep/g;
 	
 	push @names, "$arg.pm" unless $OPT_DIR;
 	push @names, "$arg.pod" unless $OPT_DIR;
@@ -101,7 +117,7 @@ foreach my $arg ( @ARGV )
     # An argument that does not contain '::' and ends in .pm or some other
     # extension is searched for unchanged.
     
-    elsif ( $arg =~ / [.] \w+ $ /x )
+    elsif ( $arg =~ /[.]\w+$/ )
     {
 	push @names, $arg;
     }
@@ -117,48 +133,42 @@ foreach my $arg ( @ARGV )
 	push @names, $arg;
     }
     
-    # Mark the end of the equivalent names for this argument.
+    # Now look up all of the name variants for this argument in each element of
+    # @INC. Stop when we find a match, unless the -a option was specified.
     
-    push @names, '-*-';
-}
-
-
-# Now look up the name(s) corresponding to each argument in each element of
-# @INC. Stop when we find a match for any variant from a given argument.
-
-while ( defined(my $name = shift @names) )
-{
-    next if $name eq '-*-';
-    
-  DIR:
-    foreach my $dir ( @INC )
+  NAME:
+    while ( defined(my $name = shift @names) )
     {
-	if ( -e "$dir/$name" )
+	foreach my $dir ( @INC )
 	{
-	    if ( $OPT_VER && -r "$dir/$name" )
-	    {
-		&DisplayVersion("$dir/$name");
-	    }
+	    my $lookup = $dir =~ /$sep$/o ? "$dir$name" : "$dir$sep$name";
 	    
-	    else
-	    {
-		say "$dir/$name";
-	    }
+	    # We test -r rather than -e because perl says that a non-readable
+	    # module file is not found.
 	    
-	    $found = 1;
-	    
-	    unless ( $OPT_ALL )
+	    if ( -r $lookup )
 	    {
-		shift @names while @names && $names [0] ne '-*-';
-		last DIR;
+		if ( $OPT_VER )
+		{
+		    &DisplayVersion($lookup);
+		}
+		
+		else
+		{
+		    say $lookup;
+		}
+		
+		$rc = 0;
+		
+		last NAME unless $OPT_ALL;
 	    }
 	}
     }
 }
 
-# If not found, exit 1. Otherwise, exit 0.
+# If at least one pathname was found, exit with 0. Otherwise, exit with 1.
 
-exit 1 unless $found;
+exit $rc;
 
 
 # DisplayVersion ( filepath )
@@ -224,7 +234,12 @@ The perlwhich command is the equivalent of 'which' for Perl modules. It prints
 the full path to each specified Perl module, if it is found in @INC. A module
 may be specified as either a package name (Some::Module) or a file name
 (Some/Module.pm). By default, the first path name found for each argument is
-printed.
+printed. If the -a option is given, then all path names are printed. The -d
+option lists matching directories instead of module files.
+
+This command is intended to work on most operating systems. It checks to see
+whether the path name separator is '/' or '\' by looking at the first element of
+@INC which contains one of these characters.
 
 =head1 RESULT CODE
 

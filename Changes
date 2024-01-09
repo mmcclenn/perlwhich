@@ -1,6 +1,9 @@
 Revision history for perlwhich
 
+0.81    2023-01-09
+        Changed the name of the distribution to App-perlwhich.
+	Improved the code and added more tests.
+
 0.8     2023-01-02
         Initial release
-
 

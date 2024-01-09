@@ -12,11 +12,11 @@ license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: '1.4'
-name: perlwhich
+name: App-perlwhich
 requires:
   Pod::Usage: '0'
   perl: v5.10.1
 resources:
   license: http://dev.perl.org/licenses/
-version: '0.8'
+version: '0.81'
 x_serialization_backend: 'CPAN::Meta::YAML version 0.018'

@@ -12,7 +12,7 @@
       "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
       "version" : 2
    },
-   "name" : "perlwhich",
+   "name" : "App-perlwhich",
    "prereqs" : {
       "configure" : {
          "requires" : {
@@ -37,6 +37,6 @@
          "http://dev.perl.org/licenses/"
       ]
    },
-   "version" : "0.8",
+   "version" : "0.81",
    "x_serialization_backend" : "JSON::PP version 4.02"
 }
